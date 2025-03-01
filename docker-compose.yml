@@ -1,0 +1,322 @@
+version: '3.8'
+services:
+  cube_api:
+    restart: always
+    image: cubejs/cube:latest
+    environment:
+      - PORT=4000
+      - CUBEJS_DB_TYPE=postgres
+      - CUBEJS_DB_HOST=localhost
+      - CUBEJS_DB_PORT=5432
+      - CUBEJS_DB_NAME=cube-test-db
+      - CUBEJS_DB_USER=postgres
+      - CUBEJS_DB_PASS=adminPassword
+      - CUBEJS_DEV_MODE=true
+      - CUBEJS_CUBESTORE_HOST=cubestore_router
+      - CUBEJS_CUBESTORE_PORT=9999
+      - CUBEJS_API_SECRET=secret
+      - NODE_OPTIONS="--max-old-space-size=6144"
+      - CUBEJS_CONCURRENCY=16
+      - CUBEJS_PG_SQL_PORT=15432
+    volumes:
+      - ./cube:/cube/conf
+    depends_on:
+      - cube_refresh_worker
+      - cubestore_router
+      - cubestore_worker_1
+      - cubestore_worker_2
+      - cubestore_worker_3
+      - cubestore_worker_4
+      - cubestore_worker_5
+      - cubestore_worker_6
+      - cubestore_worker_7
+      - cubestore_worker_8
+      - cubestore_worker_9
+      - cubestore_worker_10
+      - cubestore_worker_11
+      - cubestore_worker_12
+      - cubestore_worker_13
+      - cubestore_worker_14
+      - cubestore_worker_15
+      - cubestore_worker_16
+    network_mode: host
+
+  cube_refresh_worker:
+    restart: always
+    image: cubejs/cube:latest
+    environment:
+      - PORT=4040
+      - CUBEJS_DB_TYPE=postgres
+      - CUBEJS_DB_HOST=localhost
+      - CUBEJS_DB_PORT=5432
+      - CUBEJS_DB_NAME=cube-test-db
+      - CUBEJS_DB_USER=postgres
+      - CUBEJS_DB_PASS=adminPassword
+      - CUBEJS_DEV_MODE=true
+      - CUBEJS_REFRESH_WORKER=true
+      - CUBEJS_CUBESTORE_HOST=cubestore_router
+      - CUBEJS_CUBESTORE_PORT=9999
+      - CUBEJS_API_SECRET=secret
+      - NODE_OPTIONS="--max-old-space-size=6144"
+      - CUBEJS_CONCURRENCY=16
+      - CUBEJS_PG_SQL_PORT=15431
+    volumes:
+      - ./cube:/cube/conf
+    depends_on:
+      - cubestore_router
+    network_mode: host
+
+  cubestore_router:
+    restart: always
+    image: cubejs/cubestore:latest
+    environment:
+      - CUBEJS_DEV_MODE=true
+      - CUBESTORE_WORKERS=cubestore_worker_1:10001,cubestore_worker_2:10002,cubestore_worker_3:10003,cubestore_worker_4:10004,cubestore_worker_5:10005,cubestore_worker_6:10006,cubestore_worker_7:10007,cubestore_worker_8:10008,cubestore_worker_9:10009,cubestore_worker_10:10010,cubestore_worker_11:10011,cubestore_worker_12:10012,cubestore_worker_13:10013,cubestore_worker_14:10014,cubestore_worker_15:10015,cubestore_worker_16:10016
+      - CUBESTORE_REMOTE_DIR=/cube/data
+      - CUBESTORE_SERVER_NAME=cubestore_router:9999
+      - CUBESTORE_META_PORT=9999
+      - CUBEJS_API_SECRET=secret
+      - NODE_OPTIONS="--max-old-space-size=6144"
+    volumes:
+      - .cubestore:/cube/data
+
+  cubestore_worker_1:
+    restart: always
+    image: cubejs/cubestore:latest
+    environment:
+      - CUBESTORE_WORKERS=cubestore_worker_1:10001,cubestore_worker_2:10002,cubestore_worker_3:10003,cubestore_worker_4:10004,cubestore_worker_5:10005,cubestore_worker_6:10006,cubestore_worker_7:10007,cubestore_worker_8:10008,cubestore_worker_9:10009,cubestore_worker_10:10010,cubestore_worker_11:10011,cubestore_worker_12:10012,cubestore_worker_13:10013,cubestore_worker_14:10014,cubestore_worker_15:10015,cubestore_worker_16:10016
+      - CUBESTORE_SERVER_NAME=cubestore_worker_1:10001
+      - CUBESTORE_WORKER_PORT=10001
+      - CUBESTORE_REMOTE_DIR=/cube/data
+      - CUBESTORE_META_ADDR=cubestore_router:9999
+      - NODE_OPTIONS="--max-old-space-size=6144"
+    volumes:
+      - .cubestore:/cube/data
+    depends_on:
+      - cubestore_router
+
+  cubestore_worker_2:
+    restart: always
+    image: cubejs/cubestore:latest
+    environment:
+      - CUBESTORE_WORKERS=cubestore_worker_1:10001,cubestore_worker_2:10002,cubestore_worker_3:10003,cubestore_worker_4:10004,cubestore_worker_5:10005,cubestore_worker_6:10006,cubestore_worker_7:10007,cubestore_worker_8:10008,cubestore_worker_9:10009,cubestore_worker_10:10010,cubestore_worker_11:10011,cubestore_worker_12:10012,cubestore_worker_13:10013,cubestore_worker_14:10014,cubestore_worker_15:10015,cubestore_worker_16:10016
+      - CUBESTORE_SERVER_NAME=cubestore_worker_2:10002
+      - CUBESTORE_WORKER_PORT=10002
+      - CUBESTORE_REMOTE_DIR=/cube/data
+      - CUBESTORE_META_ADDR=cubestore_router:9999
+      - NODE_OPTIONS="--max-old-space-size=6144"
+    volumes:
+      - .cubestore:/cube/data
+    depends_on:
+      - cubestore_router
+
+  # Add additional workers up to 16
+  cubestore_worker_3:
+    restart: always
+    image: cubejs/cubestore:latest
+    environment:
+      - CUBESTORE_WORKERS=cubestore_worker_1:10001,cubestore_worker_2:10002,cubestore_worker_3:10003,cubestore_worker_4:10004,cubestore_worker_5:10005,cubestore_worker_6:10006,cubestore_worker_7:10007,cubestore_worker_8:10008,cubestore_worker_9:10009,cubestore_worker_10:10010,cubestore_worker_11:10011,cubestore_worker_12:10012,cubestore_worker_13:10013,cubestore_worker_14:10014,cubestore_worker_15:10015,cubestore_worker_16:10016
+      - CUBESTORE_SERVER_NAME=cubestore_worker_3:10003
+      - CUBESTORE_WORKER_PORT=10003
+      - CUBESTORE_REMOTE_DIR=/cube/data
+      - CUBESTORE_META_ADDR=cubestore_router:9999
+      - NODE_OPTIONS="--max-old-space-size=6144"
+    volumes:
+      - .cubestore:/cube/data
+    depends_on:
+      - cubestore_router
+
+  cubestore_worker_4:
+    restart: always
+    image: cubejs/cubestore:latest
+    environment:
+      - CUBESTORE_WORKERS=cubestore_worker_1:10001,cubestore_worker_2:10002,cubestore_worker_3:10003,cubestore_worker_4:10004,cubestore_worker_5:10005,cubestore_worker_6:10006,cubestore_worker_7:10007,cubestore_worker_8:10008,cubestore_worker_9:10009,cubestore_worker_10:10010,cubestore_worker_11:10011,cubestore_worker_12:10012,cubestore_worker_13:10013,cubestore_worker_14:10014,cubestore_worker_15:10015,cubestore_worker_16:10016
+      - CUBESTORE_SERVER_NAME=cubestore_worker_4:10004
+      - CUBESTORE_WORKER_PORT=10004
+      - CUBESTORE_REMOTE_DIR=/cube/data
+      - CUBESTORE_META_ADDR=cubestore_router:9999
+      - NODE_OPTIONS="--max-old-space-size=6144"
+    volumes:
+      - .cubestore:/cube/data
+    depends_on:
+      - cubestore_router
+
+  cubestore_worker_5:
+    restart: always
+    image: cubejs/cubestore:latest
+    environment:
+      - CUBESTORE_WORKERS=cubestore_worker_1:10001,cubestore_worker_2:10002,cubestore_worker_3:10003,cubestore_worker_4:10004,cubestore_worker_5:10005,cubestore_worker_6:10006,cubestore_worker_7:10007,cubestore_worker_8:10008,cubestore_worker_9:10009,cubestore_worker_10:10010,cubestore_worker_11:10011,cubestore_worker_12:10012,cubestore_worker_13:10013,cubestore_worker_14:10014,cubestore_worker_15:10015,cubestore_worker_16:10016
+      - CUBESTORE_SERVER_NAME=cubestore_worker_5:10005
+      - CUBESTORE_WORKER_PORT=10005
+      - CUBESTORE_REMOTE_DIR=/cube/data
+      - CUBESTORE_META_ADDR=cubestore_router:9999
+      - NODE_OPTIONS="--max-old-space-size=6144"
+    volumes:
+      - .cubestore:/cube/data
+    depends_on:
+      - cubestore_router
+
+  cubestore_worker_6:
+    restart: always
+    image: cubejs/cubestore:latest
+    environment:
+      - CUBESTORE_WORKERS=cubestore_worker_1:10001,cubestore_worker_2:10002,cubestore_worker_3:10003,cubestore_worker_4:10004,cubestore_worker_5:10005,cubestore_worker_6:10006,cubestore_worker_7:10007,cubestore_worker_8:10008,cubestore_worker_9:10009,cubestore_worker_10:10010,cubestore_worker_11:10011,cubestore_worker_12:10012,cubestore_worker_13:10013,cubestore_worker_14:10014,cubestore_worker_15:10015,cubestore_worker_16:10016
+      - CUBESTORE_SERVER_NAME=cubestore_worker_6:10006
+      - CUBESTORE_WORKER_PORT=10006
+      - CUBESTORE_REMOTE_DIR=/cube/data
+      - CUBESTORE_META_ADDR=cubestore_router:9999
+      - NODE_OPTIONS="--max-old-space-size=6144"
+    volumes:
+      - .cubestore:/cube/data
+    depends_on:
+      - cubestore_router
+
+  cubestore_worker_7:
+    restart: always
+    image: cubejs/cubestore:latest
+    environment:
+      - CUBESTORE_WORKERS=cubestore_worker_1:10001,cubestore_worker_2:10002,cubestore_worker_3:10003,cubestore_worker_4:10004,cubestore_worker_5:10005,cubestore_worker_6:10006,cubestore_worker_7:10007,cubestore_worker_8:10008,cubestore_worker_9:10009,cubestore_worker_10:10010,cubestore_worker_11:10011,cubestore_worker_12:10012,cubestore_worker_13:10013,cubestore_worker_14:10014,cubestore_worker_15:10015,cubestore_worker_16:10016
+      - CUBESTORE_SERVER_NAME=cubestore_worker_7:10007
+      - CUBESTORE_WORKER_PORT=10007
+      - CUBESTORE_REMOTE_DIR=/cube/data
+      - CUBESTORE_META_ADDR=cubestore_router:9999
+      - NODE_OPTIONS="--max-old-space-size=6144"
+    volumes:
+      - .cubestore:/cube/data
+    depends_on:
+      - cubestore_router
+
+  cubestore_worker_8:
+    restart: always
+    image: cubejs/cubestore:latest
+    environment:
+      - CUBESTORE_WORKERS=cubestore_worker_1:10001,cubestore_worker_2:10002,cubestore_worker_3:10003,cubestore_worker_4:10004,cubestore_worker_5:10005,cubestore_worker_6:10006,cubestore_worker_7:10007,cubestore_worker_8:10008,cubestore_worker_9:10009,cubestore_worker_10:10010,cubestore_worker_11:10011,cubestore_worker_12:10012,cubestore_worker_13:10013,cubestore_worker_14:10014,cubestore_worker_15:10015,cubestore_worker_16:10016
+      - CUBESTORE_SERVER_NAME=cubestore_worker_8:10008
+      - CUBESTORE_WORKER_PORT=10008
+      - CUBESTORE_REMOTE_DIR=/cube/data
+      - CUBESTORE_META_ADDR=cubestore_router:9999
+      - NODE_OPTIONS="--max-old-space-size=6144"
+    volumes:
+      - .cubestore:/cube/data
+    depends_on:
+      - cubestore_router
+
+  cubestore_worker_9:
+    restart: always
+    image: cubejs/cubestore:latest
+    environment:
+      - CUBESTORE_WORKERS=cubestore_worker_1:10001,cubestore_worker_2:10002,cubestore_worker_3:10003,cubestore_worker_4:10004,cubestore_worker_5:10005,cubestore_worker_6:10006,cubestore_worker_7:10007,cubestore_worker_8:10008,cubestore_worker_9:10009,cubestore_worker_10:10010,cubestore_worker_11:10011,cubestore_worker_12:10012,cubestore_worker_13:10013,cubestore_worker_14:10014,cubestore_worker_15:10015,cubestore_worker_16:10016
+      - CUBESTORE_SERVER_NAME=cubestore_worker_9:10009
+      - CUBESTORE_WORKER_PORT=10009
+      - CUBESTORE_REMOTE_DIR=/cube/data
+      - CUBESTORE_META_ADDR=cubestore_router:9999
+      - NODE_OPTIONS="--max-old-space-size=6144"
+    volumes:
+      - .cubestore:/cube/data
+    depends_on:
+      - cubestore_router
+
+  cubestore_worker_10:
+    restart: always
+    image: cubejs/cubestore:latest
+    environment:
+      - CUBESTORE_WORKERS=cubestore_worker_1:10001,cubestore_worker_2:10002,cubestore_worker_3:10003,cubestore_worker_4:10004,cubestore_worker_5:10005,cubestore_worker_6:10006,cubestore_worker_7:10007,cubestore_worker_8:10008,cubestore_worker_9:10009,cubestore_worker_10:10010,cubestore_worker_11:10011,cubestore_worker_12:10012,cubestore_worker_13:10013,cubestore_worker_14:10014,cubestore_worker_15:10015,cubestore_worker_16:10016
+      - CUBESTORE_SERVER_NAME=cubestore_worker_10:10010
+      - CUBESTORE_WORKER_PORT=10010
+      - CUBESTORE_REMOTE_DIR=/cube/data
+      - CUBESTORE_META_ADDR=cubestore_router:9999
+      - NODE_OPTIONS="--max-old-space-size=6144"
+    volumes:
+      - .cubestore:/cube/data
+    depends_on:
+      - cubestore_router
+
+  cubestore_worker_11:
+    restart: always
+    image: cubejs/cubestore:latest
+    environment:
+      - CUBESTORE_WORKERS=cubestore_worker_1:10001,cubestore_worker_2:10002,cubestore_worker_3:10003,cubestore_worker_4:10004,cubestore_worker_5:10005,cubestore_worker_6:10006,cubestore_worker_7:10007,cubestore_worker_8:10008,cubestore_worker_9:10009,cubestore_worker_10:10010,cubestore_worker_11:10011,cubestore_worker_12:10012,cubestore_worker_13:10013,cubestore_worker_14:10014,cubestore_worker_15:10015,cubestore_worker_16:10016
+      - CUBESTORE_SERVER_NAME=cubestore_worker_11:10011
+      - CUBESTORE_WORKER_PORT=10011
+      - CUBESTORE_REMOTE_DIR=/cube/data
+      - CUBESTORE_META_ADDR=cubestore_router:9999
+      - NODE_OPTIONS="--max-old-space-size=6144"
+    volumes:
+      - .cubestore:/cube/data
+    depends_on:
+      - cubestore_router
+
+  cubestore_worker_12:
+    restart: always
+    image: cubejs/cubestore:latest
+    environment:
+      - CUBESTORE_WORKERS=cubestore_worker_1:10001,cubestore_worker_2:10002,cubestore_worker_3:10003,cubestore_worker_4:10004,cubestore_worker_5:10005,cubestore_worker_6:10006,cubestore_worker_7:10007,cubestore_worker_8:10008,cubestore_worker_9:10009,cubestore_worker_10:10010,cubestore_worker_11:10011,cubestore_worker_12:10012,cubestore_worker_13:10013,cubestore_worker_14:10014,cubestore_worker_15:10015,cubestore_worker_16:10016
+      - CUBESTORE_SERVER_NAME=cubestore_worker_12:10012
+      - CUBESTORE_WORKER_PORT=10012
+      - CUBESTORE_REMOTE_DIR=/cube/data
+      - CUBESTORE_META_ADDR=cubestore_router:9999
+      - NODE_OPTIONS="--max-old-space-size=6144"
+    volumes:
+      - .cubestore:/cube/data
+    depends_on:
+      - cubestore_router
+
+  cubestore_worker_13:
+    restart: always
+    image: cubejs/cubestore:latest
+    environment:
+      - CUBESTORE_WORKERS=cubestore_worker_1:10001,cubestore_worker_2:10002,cubestore_worker_3:10003,cubestore_worker_4:10004,cubestore_worker_5:10005,cubestore_worker_6:10006,cubestore_worker_7:10007,cubestore_worker_8:10008,cubestore_worker_9:10009,cubestore_worker_10:10010,cubestore_worker_11:10011,cubestore_worker_12:10012,cubestore_worker_13:10013,cubestore_worker_14:10014,cubestore_worker_15:10015,cubestore_worker_16:10016
+      - CUBESTORE_SERVER_NAME=cubestore_worker_13:10013
+      - CUBESTORE_WORKER_PORT=10013
+      - CUBESTORE_REMOTE_DIR=/cube/data
+      - CUBESTORE_META_ADDR=cubestore_router:9999
+      - NODE_OPTIONS="--max-old-space-size=6144"
+    volumes:
+      - .cubestore:/cube/data
+    depends_on:
+      - cubestore_router
+
+  cubestore_worker_14:
+    restart: always
+    image: cubejs/cubestore:latest
+    environment:
+      - CUBESTORE_WORKERS=cubestore_worker_1:10001,cubestore_worker_2:10002,cubestore_worker_3:10003,cubestore_worker_4:10004,cubestore_worker_5:10005,cubestore_worker_6:10006,cubestore_worker_7:10007,cubestore_worker_8:10008,cubestore_worker_9:10009,cubestore_worker_10:10010,cubestore_worker_11:10011,cubestore_worker_12:10012,cubestore_worker_13:10013,cubestore_worker_14:10014,cubestore_worker_15:10015,cubestore_worker_16:10016
+      - CUBESTORE_SERVER_NAME=cubestore_worker_14:10014
+      - CUBESTORE_WORKER_PORT=10014
+      - CUBESTORE_REMOTE_DIR=/cube/data
+      - CUBESTORE_META_ADDR=cubestore_router:9999
+      - NODE_OPTIONS="--max-old-space-size=6144"
+    volumes:
+      - .cubestore:/cube/data
+    depends_on:
+      - cubestore_router
+
+  cubestore_worker_15:
+    restart: always
+    image: cubejs/cubestore:latest
+    environment:
+      - CUBESTORE_WORKERS=cubestore_worker_1:10001,cubestore_worker_2:10002,cubestore_worker_3:10003,cubestore_worker_4:10004,cubestore_worker_5:10005,cubestore_worker_6:10006,cubestore_worker_7:10007,cubestore_worker_8:10008,cubestore_worker_9:10009,cubestore_worker_10:10010,cubestore_worker_11:10011,cubestore_worker_12:10012,cubestore_worker_13:10013,cubestore_worker_14:10014,cubestore_worker_15:10015,cubestore_worker_16:10016
+      - CUBESTORE_SERVER_NAME=cubestore_worker_15:10015
+      - CUBESTORE_WORKER_PORT=10015
+      - CUBESTORE_REMOTE_DIR=/cube/data
+      - CUBESTORE_META_ADDR=cubestore_router:9999
+      - NODE_OPTIONS="--max-old-space-size=6144"
+    volumes:
+      - .cubestore:/cube/data
+    depends_on:
+      - cubestore_router
+
+  cubestore_worker_16:
+    restart: always
+    image: cubejs/cubestore:latest
+    environment:
+      - CUBESTORE_WORKERS=cubestore_worker_1:10001,cubestore_worker_2:10002,cubestore_worker_3:10003,cubestore_worker_4:10004,cubestore_worker_5:10005,cubestore_worker_6:10006,cubestore_worker_7:10007,cubestore_worker_8:10008,cubestore_worker_9:10009,cubestore_worker_10:10010,cubestore_worker_11:10011,cubestore_worker_12:10012,cubestore_worker_13:10013,cubestore_worker_14:10014,cubestore_worker_15:10015,cubestore_worker_16:10016
+      - CUBESTORE_SERVER_NAME=cubestore_worker_16:10016
+      - CUBESTORE_WORKER_PORT=10016
+      - CUBESTORE_REMOTE_DIR=/cube/data
+      - CUBESTORE_META_ADDR=cubestore_router:9999
+      - NODE_OPTIONS="--max-old-space-size=6144"
+    volumes:
+      - .cubestore:/cube/data
+    depends_on:
+      - cubestore_router
